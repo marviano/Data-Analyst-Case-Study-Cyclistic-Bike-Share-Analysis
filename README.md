@@ -36,12 +36,12 @@ the datasets are appropriate and will enable you to answer the business question
 Motivate International Inc. under this license.
 
 Data used : 
-- 2021, Month of 01-05 & 11-12
-- 2020, Month of 06-10
+- 2021, Month of 01-11
+- 2022, Month of 01
 
 Changes made :
-1. Mixing the 2020 and 2021 due to too many invalid data on 2021 month of 06-10, at the "started at" & "ended at" column's rows filled with "######". 
-2. Cleaning and Aggregate all of each month files into one file named "MasterTrip_1yr-mix_2020-2021.csv"
+1. Mixing the 2021 and 2022 due to too many invalid data on 2021 month of 06-10, at the "started at" & "ended at" column's rows filled with "######". 
+2. Cleaning and Aggregate all of each month files into one file named "202102-202201_divvy-tripdata.csv"
 3. Added "ride_length" & "day_of_week" columns using "Google Spreadsheet'
 
 
@@ -49,7 +49,7 @@ Changes made :
 
 ```
 # Storing data to data frame
-master_trip<- read.csv("MasterTrip_1yr-mix_2020-2021.csv")
+master_trip<- read.csv("202102-202201_divvy-tripdata.csv")
 
 
 # Checking the columns and structure
@@ -93,6 +93,7 @@ sum(master_trip_2$ride_length>=1440)
 Summary : 
 - <= 0 mins ride_length removed, 1
 - more than 1 day ride_length removed, 2
+ 
 
 ###  Dataframe columns of master_trip_2, for visualization
 ```
@@ -111,52 +112,24 @@ min(master_trip_2$ride_length_mins)
 max(master_trip_2$ride_length_mins) 
 ```
 Result : 
-1. Mean : 13.82
-2. Median : 9.83
-3. Min : 0.13
-4. Max : 74.61
-
-### Proportion of Casual Member
-```
-master_trip_2%>%
-group_by(member_casual) %>%
-summarise(number_of_users = n()) %>%
-ggplot(aes(x="", y=number_of_users, fill=member_casual)) +
-geom_col(color = "black") +
-geom_text(aes(label = number_of_users), position = position_stack(vjust = 0.5),
-            show.legend = FALSE) +
-coord_polar(theta = "y")+
-labs(title = "Proportion of members type")
-```
-
-
-### Types of Bikes Proportion
-```
-master_trip_2%>%
-group_by(rideable_type) %>%
-summarise(number_of_bikes = n()) %>%
-ggplot(aes(x="", y=number_of_bikes, fill=rideable_type)) +
-geom_col(color = "black") +
-geom_text(aes(label = number_of_bikes), position = position_stack(vjust = 0.5),
-show.legend = FALSE) +
-coord_polar(theta = "y") +
-theme_void() + 
-labs(title = "Proportion of Three Different Types of Bikes")
-```
+1. Mean : 19.44
+2. Median : 11.95
+3. Min : 0.01
+4. Max : 1439.95
 
 
 ### Comparison of each member type ride length
 ```
-# Mean - Casual : 18.33 | Member : 12.50
+# Mean - Casual : 26.84 | Member : 13.36
 aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = mean)
 
-# Median - Casual : 14.41 | Member : 8.68
+# Median - Casual : 15.93 | Member : 9.55
 aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = median)
 
-#Min - Casual : 0.71 | Member : 0.13
+#Min - Casual : 0.01 | Member : 0.01
 aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = min)
 
-#Max - Casual : 74.611 | Member : 62.81
+#Max - Casual : 1439.91 | Member : 1439.95
 aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = max)
 ```
 
@@ -172,30 +145,84 @@ aggregate(master_trip_2$ride_length_mins ~ master_trip_2$member_casual + master_
 ```
 ```
 # Result
-1                       casual                    Friday                      19.412745
-2                       member                    Friday                      13.733838
-3                       casual                    Monday                      18.800758
-4                       member                    Monday                       7.629667
-5                       casual                  Saturday                      22.405556
-6                       member                  Saturday                      13.836792
-7                       casual                    Sunday                      16.521053
-8                       member                    Sunday                      14.407778
-9                       casual                  Thursday                      13.607778
-10                      member                  Thursday                      12.706011
-11                      casual                   Tuesday                      22.141667
-12                      member                   Tuesday                      11.570667
-13                      casual                 Wednesday                      14.684848
-14                      member                 Wednesday                      13.159016
+1                       casual                    Sunday                       31.05807
+2                       member                    Sunday                       15.27465
+3                       casual                    Monday                       27.21924
+4                       member                    Monday                       12.94730
+5                       casual                   Tuesday                       24.45944
+6                       member                   Tuesday                       12.59973
+7                       casual                 Wednesday                       23.24978
+8                       member                 Wednesday                       12.61532
+9                       casual                  Thursday                       23.13469
+10                      member                  Thursday                       12.54225
+11                      casual                    Friday                       24.92553
+12                      member                    Friday                       13.08549
+13                      casual                  Saturday                       29.15350
+14                      member                  Saturday                       14.93197
 ```
 
+
 ### Average duration & number of ride each member type
+```
 master_trip_2 %>%
 mutate(weekday = wday(started_at, label = TRUE)) %>%
 group_by(member_casual, weekday) %>%
 summarise(number_of_rides = n(), average_duration = mean(ride_length_mins)) %>%
 arrange(member_casual, weekday)
+```
+```
+# Result
+ 1 casual        Sun              479898             31.1
+ 2 casual        Mon              286263             27.2
+ 3 casual        Tue              274541             24.5
+ 4 casual        Wed              278868             23.2
+ 5 casual        Thu              285859             23.1
+ 6 casual        Fri              363154             24.9
+ 7 casual        Sat              556914             29.2
+ 8 member        Sun              376111             15.3
+ 9 member        Mon              418351             12.9
+10 member        Tue              468600             12.6
+11 member        Wed              478644             12.6
+12 member        Thu              453470             12.5
+13 member        Fri              445023             13.1
+14 member        Sat              431584             14.9
+```
+
+## :bar_chart: Vizualization Time!
+
+### Proportion of Casual Member
+```
+master_trip_2%>%
+group_by(member_casual) %>%
+summarise(user_type = n()) %>%
+ggplot(aes(x="", y=user_type, fill=member_casual)) +
+geom_col(color = "black") +
+geom_text(aes(label = user_type), position = position_stack(vjust = 0.5),
+            show.legend = FALSE) +
+coord_polar(theta = "y")+
+labs(title = "Proportion of members type")
+```
+![gambar](https://user-images.githubusercontent.com/27352831/154780501-f22b6060-b446-41a3-8402-004220b9228d.png)
+
+
+### Types of Bikes Proportion
+```
+master_trip_2%>%
+group_by(rideable_type) %>%
+summarise(number_of_bikes = n()) %>%
+ggplot(aes(x="", y=number_of_bikes, fill=rideable_type)) +
+geom_col(color = "black") +
+geom_text(aes(label = number_of_bikes), position = position_stack(vjust = 0.5),
+show.legend = FALSE) +
+coord_polar(theta = "y") +
+theme_void() + 
+labs(title = "Bikes Type Proportion")
+```
+![gambar](https://user-images.githubusercontent.com/27352831/154780538-e0b1d151-e889-48ca-8aa2-ac8a5d0c6005.png)
+
 
 ### Viz - Each day average ride length in minutes
+```
 master_trip_2 %>%
 mutate(weekday = wday(started_at, label = TRUE)) %>%
 group_by(member_casual, weekday) %>%
@@ -203,9 +230,13 @@ summarise(number_of_rides = n(), average_duration = mean(ride_length_mins)) %>%
 arrange(member_casual, weekday) %>%
 ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
 geom_col(position = "dodge") +
-ggtitle("Average Duration based on Rider Type")
+ggtitle("Rider Type Average Duration")
+```
+![gambar](https://user-images.githubusercontent.com/27352831/154780866-9e773da4-aaf4-4f6e-a317-48d64dda790e.png)
 
-{r weekday total rides viz}
+
+### Viz - Weekday Total Rides
+```
 master_trip_2 %>%
 mutate(weekday = wday(started_at, label = TRUE)) %>%
 group_by(member_casual, weekday) %>%
@@ -213,10 +244,13 @@ summarise(number_of_rides = n(), average_duration = mean(ride_length_mins)) %>%
 arrange(member_casual, weekday) %>%
 ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
 geom_col(position = "dodge") +
-ggtitle("Number of Bikes based on Rider Type")
+ggtitle("Rider Type Number of Bikes")
+```
+![gambar](https://user-images.githubusercontent.com/27352831/154780907-352d60ee-21f1-4471-84cc-56b8f34b6d97.png)
 
 
-{r bike_type_user}
+### Viz - User type bike
+```
 master_trip_2 %>%
 mutate(master_trip_2$rideable_type, label = TRUE) %>%
 group_by(rideable_type, member_casual) %>%
@@ -224,35 +258,27 @@ arrange(member_casual, rideable_type) %>%
 summarise(number_of_rides = n()) %>%
 ggplot(aes(x = rideable_type, y = number_of_rides, fill = member_casual)) +
 geom_col(position = "dodge") +
-ggtitle("Different Bike Types Usage")
+ggtitle("Bike Types Usage Difference")
+```
+![gambar](https://user-images.githubusercontent.com/27352831/154781130-27832ae2-418a-4d74-be53-3fa84ba65362.png)
 
 
-{r generated_summary_report}
-counts <- aggregate(master_trip_2$ride_length_mins ~ master_trip_2$member_casual + 
-                      master_trip_2$day_of_week, FUN = mean)
+# Findings
+1. Saturday and Sunday is always be dominated by casual member, it's twice than the member type users, outside that is dominated by member type user. 
+2. No members are using the docked bike, it's only popular on casual member. But it's still the least popular than the other bike type
+3. Docked bike is the least popular among the user
+4. Casual users ride the longest average duration
+5. The amount of casual members are almost half of the entire user count, it's occupied 40% of the total user population
 
+# Summary / Suggestions
+1. The company can make a promotion/marketing strategy focused on Saturday and Sunday for effective and efficient on converting the casual to member user
+2. Create a duration based promotion milestone and Weekend promotion on the membership program
 
-{r exported_saved_csv}
-write.csv(counts, file ="/Users/Marviano/Desktop/avg_ride_length.csv")
+# Future Improvement
+1. Too many missing station name is missing
+	Adding auto completion of station name by comparing it with the langitude and longitude.
+2. There are 652 of ride length under/equal than 0 minutes
+	Adding validation upon the input should do the job to lessen the data error
+3. There are 4067 of ride lgnth more/equal than 1 day
+	Giving reminder or limitation of 1 day rent, and then giving an overcharge fee for more than a 1 day rent will lessen the more than 1 day bike rent
 
-# FINDINGS
-* Casual users occupied almost 40% of the total users population. 
-* Docked bike was the most popular one (over 80%) among three bike types.
-* Casual users mostly use the bike-share service on the weekends, but less often during the weekdays. 
-  Number of rides from casual users on the weekdays was only half of number on the weekends. 
-* Average duration from casual users were twice as much as annual members' over the whole weeks.
-
-# CONCULSIONS / SUGGESTIONS
-* Provide special membership offers (e.g lower price) for using docked bikes in order to convert huge casual docked bike users into annual members. 
-* Offer "weekdays membership packages" to those who use Cyclistic bikes on weekdays. 
-* Set a duration milestone and create cash-back or credit-bonus membership program to convert casual users into members because 
-  they have a longer average duration than current members. 
-
-# LIMITATION / FUTURE IMPROVEMENT
-* There were 11126 rows that ride duration was equal to or less than 0 minutes, and 2863 rows that ride duration was greater than one day. 
-  All of these were removed and we should figure out: 
-  - whether technical errors have occurred in the system (e.g. negative ride duration records)
-  - and the possibility of users rent Cyclistic over a day (e.g ride duration over 1440 minutes.)    
-* There were huge number of rows that the station names were missing while the latitude and longitude information recorded. 
-  I didn't remove or drop these rows, but I think the missing station name could be fixed by comparing latitude and 
-  longitude information from other rows.
