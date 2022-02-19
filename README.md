@@ -126,10 +126,10 @@ aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = mea
 # Median - Casual : 15.93 | Member : 9.55
 aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = median)
 
-#Min - Casual : 0.01 | Member : 0.01
+# Min - Casual : 0.01 | Member : 0.01
 aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = min)
 
-#Max - Casual : 1439.91 | Member : 1439.95
+# Max - Casual : 1439.91 | Member : 1439.95
 aggregate(master_trip_2$ride_length_mins~ master_trip_2$member_casual, FUN = max)
 ```
 
@@ -205,6 +205,8 @@ labs(title = "Proportion of members type")
 ![gambar](https://user-images.githubusercontent.com/27352831/154780501-f22b6060-b446-41a3-8402-004220b9228d.png)
 
 
+
+
 ### Types of Bikes Proportion
 ```
 master_trip_2%>%
@@ -221,6 +223,8 @@ labs(title = "Bikes Type Proportion")
 ![gambar](https://user-images.githubusercontent.com/27352831/154780538-e0b1d151-e889-48ca-8aa2-ac8a5d0c6005.png)
 
 
+
+
 ### Viz - Each day average ride length in minutes
 ```
 master_trip_2 %>%
@@ -233,6 +237,8 @@ geom_col(position = "dodge") +
 ggtitle("Rider Type Average Duration")
 ```
 ![gambar](https://user-images.githubusercontent.com/27352831/154780866-9e773da4-aaf4-4f6e-a317-48d64dda790e.png)
+
+
 
 
 ### Viz - Weekday Total Rides
@@ -249,6 +255,8 @@ ggtitle("Rider Type Number of Bikes")
 ![gambar](https://user-images.githubusercontent.com/27352831/154780907-352d60ee-21f1-4471-84cc-56b8f34b6d97.png)
 
 
+
+
 ### Viz - User type bike
 ```
 master_trip_2 %>%
@@ -261,6 +269,8 @@ geom_col(position = "dodge") +
 ggtitle("Bike Types Usage Difference")
 ```
 ![gambar](https://user-images.githubusercontent.com/27352831/154781130-27832ae2-418a-4d74-be53-3fa84ba65362.png)
+
+
 
 
 # Findings
