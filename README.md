@@ -31,7 +31,7 @@ library(dplyr)
 
 ### :information_source: Data Source
 # [Link to Datasets](https://divvy-tripdata.s3.amazonaws.com/index.html)
-
+<br /><br />
 It's size are >25 MB so i can't upload it here
 Note: The datasets have a different name because Cyclistic is a fictional company. For the purposes of this case study,
 the datasets are appropriate and will enable you to answer the business questions. The data has been made available by
